@@ -72,6 +72,16 @@ If you only care about U.S. Pacific Time policy and recent dates, this library
 will be much, much smaller (even if you trim down builds of the above
 libraries). This matters if you’re shipping the code in question to browsers.
 
+## Why would I use this?
+
+Sometimes you have business functions that consider dates in a specific time
+zone, not necessarily the user’s local time zone. For instance, maybe you’re
+running an e-commerce site where timed messages, promotions, etc. are all based
+on the company’s “official current time” in a specific time zone. If you have
+applications running on user’s devices (like in their web browser), then how do
+you tell what time it is in that time zone? Well, if that time zone happens to
+be Pacific Time, you’re in luck – that’s what this does.
+
 ## Alternatives
 
 If you **know** you will only be running on platforms that support
