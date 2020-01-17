@@ -12,8 +12,8 @@ It **ONLY** supports:
 - Pacific Time.
 - U.S. policy effective 2007 onwards.
 
-This will necessarily be correct for dates before 2007 or for territories where
-this policy does not apply.
+This will not necessarily be correct for dates before 2007 or for territories
+where this policy does not apply.
 
 ## Usage
 
