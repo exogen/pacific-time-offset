@@ -60,9 +60,9 @@ isDaylightTime('2020-01-01T00:00:00.000Z');
 
 ## Motivation
 
-JavaScript dates are always in the system’s current timezone, so the only
-information available is the local timezone offset. It is very difficult to
-determine information about other timezones without pulling in a full library
+JavaScript dates are always in the system’s current time zone, so the only
+information available is the local time zone offset. It is very difficult to
+determine information about other time zones without pulling in a full library
 like [Moment](https://momentjs.com) or [Luxon](https://moment.github.io/luxon/)
 which incorporate the full
 [IANA time zone database](https://www.iana.org/time-zones) (or something like
