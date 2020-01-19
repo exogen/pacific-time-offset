@@ -18,26 +18,27 @@ where this policy does not apply.
 ## Usage
 
 The default export is a function that will return either the Pacific Standard
-Time or Pacific Daylight Time offset (from UTC) in minutes, either -480 or -420.
-**Note that this is the reverse of what JavaScript’s weird Date
-`getTimezoneOffset()` method would return, which is the offset _to_ UTC.**
+Time or Pacific Daylight Time offset (from UTC) in minutes, either -480 or -420,
+depending on which applies to the given date. **Note that this is the reverse of
+what JavaScript’s weird Date `getTimezoneOffset()` method would return, which is
+the offset _to_ UTC.**
 
 If an argument is supplied, it must be a Date instance.
 
 ```js
 import pacificTimeOffset from 'pacific-time-offset';
 
-// 480 or 420, depending on current date.
+// -480 or -420, depending on current date.
 pacificTimeOffset();
 pacificTimeOffset(new Date());
 
-// 480
+// -480
 pacificTimeOffset(new Date('2020-01-01T00:00:00.000Z'));
 pacificTimeOffset(new Date(2020, 0, 1));
 pacificTimeOffset(new Date(1579296618326));
 pacificTimeOffset(new Date(2020, 0, 15));
 
-// 420
+// -420
 pacificTimeOffset(new Date('2020-06-01T00:00:00.000Z'));
 pacificTimeOffset(new Date(2020, 5, 1));
 pacificTimeOffset(new Date(1594848671814));
