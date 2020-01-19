@@ -17,17 +17,17 @@
  * zone uses the extended dates, as do some other parts. The vast majority of
  * Mexico, however, still uses the old dates.
  */
-const STANDARD_OFFSET = 480;
-const DAYLIGHT_OFFSET = 420;
+var PST = -480;
+var PDT = -420;
 
 /**
- * Return the Pacific Standard Time or Pacific Daylight Time offset (480 or 420,
- * as would be returned by JavaScript Date's `getTimezoneOffset()` method)
- * depending on whether the given (or by default, current) date falls within
- * standard or daylight time.
+ * Return the Pacific Standard Time or Pacific Daylight Time offset (-480 or
+ * -420, the reverse sign of what would be returned by JavaScript's weird Date
+ * `getTimezoneOffset()` method) depending on whether the given (or by default,
+ * current) date falls within standard or daylight time.
  */
-function pacificTimeOffset(...args) {
-  return isDaylightTime(...args) ? DAYLIGHT_OFFSET : STANDARD_OFFSET;
+function pacificTimeOffset(date) {
+  return isDaylightTime(date) ? PDT : PST;
 }
 
 /**
@@ -35,54 +35,65 @@ function pacificTimeOffset(...args) {
  * Daylight Time period per the U.S. policy effective 2007 (even if the date is
  * before then).
  */
-function isDaylightTime(...args) {
-  const date = new Date(...args);
-  const month = date.getUTCMonth();
-  const dayOfMonth = date.getUTCDate();
-  const dayOfWeek = date.getUTCDay();
+function isDaylightTime(date) {
+  if (typeof date === 'undefined') {
+    date = new Date();
+  }
+  var month = date.getUTCMonth();
+  var dayOfMonth = date.getUTCDate();
+  var dayOfWeek = date.getUTCDay();
+  var isSunday = dayOfWeek === 0;
   // What was the date of the most recent Sunday? Will be zero or negative if
   // there hasn't been a Sunday yet this month.
-  const prevSundayDate = dayOfMonth - dayOfWeek;
-  const hour = date.getUTCHours();
+  var prevSundayDate = dayOfMonth - dayOfWeek;
+  var hour = date.getUTCHours();
 
-  if (month < 2) {
+  switch (month) {
     // Jan-Feb is always PST.
-    return false;
-  } else if (month === 2) {
+    case 0:
+    case 1:
+      return false;
     // In March, switch to PDT after 2am PST on the second Sunday.
-    if (prevSundayDate < 8) {
-      // There has only been one or fewer Sundays.
-      return false;
-    } else if (prevSundayDate < 15 && dayOfWeek === 0) {
-      // It's the second Sunday, check the time!
-      return hour >= 10;
-    } else {
-      // It's after the second Sunday.
-      return true;
-    }
-  } else if (month < 10) {
+    case 2:
+      if (prevSundayDate < 8) {
+        // There has only been one or fewer Sundays.
+        return false;
+      } else if (isSunday && prevSundayDate < 15) {
+        // It's the second Sunday, check the time!
+        return hour >= 10;
+      } else {
+        // It's after the second Sunday.
+        return true;
+      }
     // Apr-Oct is always PDT.
-    return true;
-  } else if (month === 10) {
-    // In November, switch back to PST after 2am PDT on the first Sunday.
-    if (prevSundayDate < 1) {
-      // It hasn't been Sunday yet.
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
       return true;
-    } else if (prevSundayDate < 8 && dayOfWeek === 0) {
-      // It's the first Sunday, check the time!
-      return hour < 9;
-    } else {
-      // It's after the first Sunday.
+    // In November, switch back to PST after 2am PDT on the first Sunday.
+    case 10:
+      if (prevSundayDate < 1) {
+        // It hasn't been Sunday yet.
+        return true;
+      } else if (isSunday && prevSundayDate < 8) {
+        // It's the first Sunday, check the time!
+        return hour < 9;
+      } else {
+        // It's after the first Sunday.
+        return false;
+      }
+    case 11:
+      // Dec is always PST.
       return false;
-    }
-  } else {
-    // Dec is always PST.
-    return false;
   }
 }
 
-pacificTimeOffset.STANDARD_OFFSET = STANDARD_OFFSET;
-pacificTimeOffset.DAYLIGHT_OFFSET = DAYLIGHT_OFFSET;
+pacificTimeOffset.PST = PST;
+pacificTimeOffset.PDT = PDT;
 pacificTimeOffset.isDaylightTime = isDaylightTime;
 
 module.exports = pacificTimeOffset;

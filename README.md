@@ -18,11 +18,11 @@ where this policy does not apply.
 ## Usage
 
 The default export is a function that will return either the Pacific Standard
-Time or Pacific Daylight Time offset **as would be returned by JavaScript’s
-`getTimezoneOffset()` method** – that is, 480 or 420.
+Time or Pacific Daylight Time offset (from UTC) in minutes, either -480 or -420.
+**Note that this is the reverse of what JavaScript’s weird Date
+`getTimezoneOffset()` method would return, which is the offset _to_ UTC.**
 
-All arguments are passed to the `Date` constructor. If no input is given, the
-current date is used.
+If an argument is supplied, it must be a Date instance.
 
 ```js
 import pacificTimeOffset from 'pacific-time-offset';
@@ -32,17 +32,33 @@ pacificTimeOffset();
 pacificTimeOffset(new Date());
 
 // 480
-pacificTimeOffset('2020-01-01T00:00:00.000Z');
+pacificTimeOffset(new Date('2020-01-01T00:00:00.000Z'));
 pacificTimeOffset(new Date(2020, 0, 1));
-pacificTimeOffset(1579296618326);
-pacificTimeOffset(2020, 0, 15);
+pacificTimeOffset(new Date(1579296618326));
+pacificTimeOffset(new Date(2020, 0, 15));
 
 // 420
-pacificTimeOffset('2020-06-01T00:00:00.000Z');
+pacificTimeOffset(new Date('2020-06-01T00:00:00.000Z'));
 pacificTimeOffset(new Date(2020, 5, 1));
-pacificTimeOffset(1594848671814);
-pacificTimeOffset(2020, 6, 15);
+pacificTimeOffset(new Date(1594848671814));
+pacificTimeOffset(new Date(2020, 6, 15));
 ```
+
+### Helpers
+
+Available on the exported `pacificTimeOffset` function.
+
+#### PST
+
+The value -480. You could use this for expressions like
+`pacificTimeOffset() === PST`, for example.
+
+#### PDT
+
+The value -420. You could use this for expressions like
+`pacificTimeOffset() === PDT`, for example.
+
+#### isDaylightTime
 
 If you just want to know whether the given date is in Pacific Standard Time or
 Pacific Daylight Time and don’t care about the exact offset, there is also an
@@ -52,10 +68,10 @@ Pacific Daylight Time and don’t care about the exact offset, there is also an
 import { isDaylightTime } from 'pacific-time-offset';
 
 // true
-isDaylightTime('2020-06-01T00:00:00.000Z');
+isDaylightTime(new Date('2020-06-01T00:00:00.000Z'));
 
 // false
-isDaylightTime('2020-01-01T00:00:00.000Z');
+isDaylightTime(new Date('2020-01-01T00:00:00.000Z'));
 ```
 
 ## Motivation

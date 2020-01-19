@@ -1,6 +1,6 @@
 const pacificTimeOffset = require('./index');
 
-const { STANDARD_OFFSET, DAYLIGHT_OFFSET } = pacificTimeOffset;
+const { PST, PDT } = pacificTimeOffset;
 
 describe('pacificTimeOffset', () => {
   it.each([
@@ -21,8 +21,8 @@ describe('pacificTimeOffset', () => {
     '2020-11-01T00:00:00.000Z',
     '2020-11-01T08:00:00.000Z',
     '2020-11-01T08:59:59.999Z'
-  ])('returns 420 on PDT date: %s', dateString => {
-    expect(pacificTimeOffset(dateString)).toBe(DAYLIGHT_OFFSET);
+  ])('returns -420 on PDT date: %s', dateString => {
+    expect(pacificTimeOffset(new Date(dateString))).toBe(PDT);
   });
 
   it.each([
@@ -48,7 +48,12 @@ describe('pacificTimeOffset', () => {
     '2020-11-02T00:00:00.000Z',
     '2020-12-01T00:00:00.000Z',
     '2020-12-31T23:59:59.999Z'
-  ])('returns 480 on PST date: %s', dateString => {
-    expect(pacificTimeOffset(dateString)).toBe(STANDARD_OFFSET);
+  ])('returns -480 on PST date: %s', dateString => {
+    expect(pacificTimeOffset(new Date(dateString))).toBe(PST);
+  });
+
+  it('uses the current date if given no input', () => {
+    const offset = pacificTimeOffset();
+    expect(offset === PST || offset === PDT).toBe(true);
   });
 });
